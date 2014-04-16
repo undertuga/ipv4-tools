@@ -1,0 +1,28 @@
+{
+  "author": "undertuga",
+  "name": "ipv4-tools",
+  "description": "ipv4 toolkit",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/undertuga/ipv4-tools"
+  },
+  "main": "./lib/ipv4-tools",
+  "keywords": [
+    "ipv4",
+    "network",
+    "tcp",
+    "scanner",
+    "reputation", 
+    "dns"
+  ],
+  "bin": {
+    "uppercaseme": "./bin/ipv4-tools"
+  },
+  "dependencies": {
+	  "async": ">= 0.7.0",
+	  "satelize": ">= 0.1.0"
+  },
+  "engines": {
+    "node": "*"
+  }
+}
