@@ -35,7 +35,7 @@ IPv4Tools = function(){
 IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 	
 	// validating gathered ip class
-	if(((typeof(ipclass) === 'undefined') || (ipclass === null) || (ipclass === "") || (ipclass.length <= 0)) || (ipclass.length > 1)){callback(null, false);}
+	if((typeof(ipclass) === 'undefined') || (ipclass === null) || (ipclass === '') || (ipclass.length <= 0) || (ipclass.length > 1)){callback(null, false);}
 	else{
 		// declaring octet's (-1st) holder
 		var octets = '.' + (Math.floor(Math.random() * 255) + 0) + '.' + (Math.floor(Math.random() * 255) + 0) + '.' + (Math.floor(Math.random() * 255) + 0);
@@ -95,13 +95,15 @@ IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 	
 	// validating gathered data
-	if(((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === "") || (ipv4.length <= 0) || (ipv4.length > 16))){callback(null, false);}
+	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
 	else{
 		
 		// check for valid ipv4 address
 		ipv4.split('.').forEach(function(octect){
 			if((typeof(octect) === 'undefined') || (octect === null) || (octect === '') || ((octect < 0) || (octect > 255))){callback(null, false);}
 		});
+		
+		// return validation state
 		callback(null, true);
 	}
 };
@@ -115,12 +117,12 @@ IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 /* Get IPv4 Network Data */
 IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	
-	// validate gathered data
-	if(((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === "") || (ipv4.length <= 0) || (ipv4.length > 16))){callback(null, false);}
+	// validating gathered data
+	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
 	else{
 		
-		var dns = this.dns;
-		var buffer = {ip: ipv4}, ip = ipv4.split(".");
+		// declaring needed holders
+		var buffer = {ip: ipv4}, dns = this.dns, ip = ipv4.split(".");
 	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + '.origin.asn.cymru.com';      
 	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + '.peer.asn.cymru.com';
 	    var provider = buffer['asn'] + '.asn.cymru.com';
@@ -128,60 +130,59 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	    
 	    /*
 	     * ASYNC WATERFALL SEQUENCE
-	     * Sweeping Ipv4 network data, step by step 
-	     * (less bully activity @ the dns's, less red flags... parallel it or whatever you want, not my problem.)
+	     * Sweeping Ipv4 data, step by step...
 	     */
 	    this.async.waterfall([
-	                     
+	        
          /*
           * Gather main data
           */
 	        function(callback){
 	            
 	            // gather ip data...
-	            dns.resolveTxt(origin, function(error, dnsresult){
-	                
-	            	// fail safe bail out
-	            	if(error){return false;}
+	            dns.resolveTxt(origin, function(err, dnsresult){
+	                if(err) return;
 	                
 	                // sweeping dns result
 	                dnsresult.forEach(function(dnsres){
 	                    
-	                    // split gathered result
+	                    // split gathered result and collect to buffer
 	                    var data = dnsres.split('|');
 	                    buffer['cidr'] = data[1].trim();
 	                    buffer['asn'] = data[0].trim();
-	                    callback(null, data[0].trim());
+	                    buffer['country'] = data[2].trim();
+	                    buffer['reputation'] = 0;
 	                });
+	                
+	                // bail out current waterfall operation
+                    callback(null, buffer['asn'].trim());
 	            });
 	        },
 	        
 	        
-	        
 	        /*
-	         * Gather ASN peers
+	         * Gather asn peers
 	         */
 	        function(asn, callback){
 	        
 	            // gather asn peers data
-	            dns.resolveTxt(peers, function(error, dnsresult){
-	                
-	            	// fail safe bail out
-	            	if(error){return false;}
+	            dns.resolveTxt(peers, function(err, dnsresult){
+	                if(err) return;
 	                
 	                // sweeping result
 	                dnsresult.forEach(function(dnsres){
 	                    
-	                    // extracting data from dns result
+	                    // extracting data from dns result and collect asn peers to buffer
 	                    var data = dnsres.split('|');
 	                    data = data[0].split(' ');
 	                    data.pop();
 	                    buffer['asnpeers'] = data;
-	                    callback(null, asn);
 	                });
+
+	                // bail out current waterfall operation
+                    callback(null, asn);
 	            });  
 	        },
-	        
 	        
 	        
 	        /*
@@ -190,20 +191,20 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        function(asn, callback){
 	            
 	            // gather asn / provider details
-	        	dns.resolveTxt('AS'+ asn + '.asn.cymru.com', function(error, dnsresult){
-	                
-	            	// fail safe bail out
-	            	if(error){return false;}
+	            dns.resolveTxt('AS'+ asn + '.asn.cymru.com', function(err, dnsresult){
+	                if(err) return;
 	                
 	                // sweeping result
 	                dnsresult.forEach(function(dnsres){
 	                    
-	                    // extracting data from dns result
+	                    // extracting data from dns result and collect provider to buffer
 	                    var data = dnsres.split('|');
 	                    buffer['provider'] = data[4].trim();
 	                    buffer['tstamp'] = new Date();
-	                    callback(null, true);
 	                });
+
+	                // bail out current waterfall operation
+                    callback(null, true);
 	            });
 	        }
 	        
@@ -226,11 +227,13 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 
 
 
+
+
 /* Get IPv4 Geolocation */
 IPv4Tools.prototype.getGeoLocation = function(ipv4, callback){
 	
-	// validating gathered dat
-	if(((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === "") || (ipv4.length <= 0) || (ipv4.length > 16))){callback(null, false);}
+	// validating gathered data
+	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
 	else{
 		
 		//gathering ip geo location data
@@ -240,9 +243,7 @@ IPv4Tools.prototype.getGeoLocation = function(ipv4, callback){
 			else{
 					// removing unneeded data
 					var geodata = JSON.parse(result);
-					delete geodata.ip;
-					delete geodata.asn;
-					delete geodata.isp;
+					delete geodata['ip', 'isp', 'asn'];
 					
 					// return ipv4 geolocation data
 					callback(null, geodata);
@@ -302,7 +303,6 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 		});
 	}
 };
-
 
 
 

@@ -2,8 +2,10 @@
   "author": "undertuga",
   "name": "ipv4-tools",
   "description": "ipv4 toolkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "license" : "MIT",
   "repository": {
+	"type" : "git",
     "url": "https://github.com/undertuga/ipv4-tools"
   },
   "main": "./lib/ipv4-tools",
