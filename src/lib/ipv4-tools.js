@@ -13,12 +13,15 @@
 
 
 
+
+
 IPv4Tools = function(){
 	
 	// importing required external dependencies
+	this.ipapi = 'http://ip-api.com/json/';
 	this.async = require('async');
+	this.http = require('http');
 	this.dns = require('dns');
-	this.satelize = require('satelize');
 };
 
 
@@ -88,9 +91,6 @@ IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 
 
 
-
-
-
 /* IPv4 Validation Prototype */
 IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 	
@@ -113,9 +113,7 @@ IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 
 
 
-
-
-
+/*Get IPv4 Class*/
 IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 	
 	// validating gathered data
@@ -139,6 +137,7 @@ IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 
 
 
+
 /* Get IPv4 Network Data */
 IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	
@@ -156,6 +155,8 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	    /*
 	     * ASYNC WATERFALL SEQUENCE
 	     * Sweeping Ipv4 data, step by step...
+	     * ---less bully activity @ the dns's, less red flags will rise up!
+	     * ---parallel it or whatever you want, not my problem if somehow shit hits the fan.
 	     */
 	    this.async.waterfall([
 	        
@@ -261,19 +262,14 @@ IPv4Tools.prototype.getGeoLocation = function(ipv4, callback){
 	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
 	else{
 		
-		//gathering ip geo location data
-		this.satelize.satelize({ip: ipv4}, function(error, result){
+		// executing http GET request to ip api
+		this.http.get(this.ipapi+ipv4, function(res){
 			
-			if(error){callback(null, false);}
-			else{
-					// removing unneeded data
-					var geodata = JSON.parse(result);
-					delete geodata['ip', 'isp', 'asn'];
-					
-					// return ipv4 geolocation data
-					callback(null, geodata);
-			}
-		});
+			var data = '';
+			res.on('data', function(chunk){data += chunk;});// while gathering response, build up data buff
+			res.on('end', function(){data = JSON.parse(data); delete data['isp', 'as', 'query']; callback(null, data);}); // parse, clean and callback data
+			
+		}).on('error', function(error){callback(error);});// fail safe bail out
 	}
 };
 

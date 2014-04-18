@@ -2,7 +2,7 @@
   "author": "undertuga",
   "name": "ipv4-tools",
   "description": "ipv4 toolkit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license" : "MIT",
   "repository": {
 	"type" : "git",
@@ -10,6 +10,8 @@
   },
   "main": "./lib/ipv4-tools",
   "keywords": [
+    "ip",
+    "geolocation",
     "ipv4",
     "network",
     "tcp",
@@ -21,8 +23,7 @@
     "uppercaseme": "./bin/ipv4-tools"
   },
   "dependencies": {
-	  "async": ">= 0.7.0",
-	  "satelize": ">= 0.1.0"
+	  "async": ">= 0.7.0"
   },
   "engines": {
     "node": "*"
