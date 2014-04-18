@@ -114,6 +114,31 @@ IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 
 
 
+
+
+IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
+	
+	// validating gathered data
+	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
+	else{
+		
+		// explode gathered ipv4 address
+		ipv4 = ipv4.split('.');
+		
+		/*ipv4 class match*/
+		if((parseInt(ipv4[0].trim()) > 0) && (parseInt(ipv4[0].trim()) <= 127)){ipv4 = null; callback(null, 'A');} // class A ipv4
+		if((parseInt(ipv4[0].trim()) > 127) && (parseInt(ipv4[0].trim()) <= 191)){ipv4 = null; callback(null, 'B');} // class B ipv4
+		if((parseInt(ipv4[0].trim()) > 191) && (parseInt(ipv4[0].trim()) <=  223)){ipv4 = null; callback(null, 'C');} // class C ipv4
+		if((parseInt(ipv4[0].trim()) > 223) && (parseInt(ipv4[0].trim()) <= 239)){ipv4 = null; callback(null, 'D');} // class D ipv4
+		if((parseInt(ipv4[0].trim()) > 239) && (parseInt(ipv4[0].trim()) <= 247)){ipv4 = null; callback(null, 'E');} // class E ipv4
+		if(ipv4 !== null){callback(null, false);} // fail safe bail out
+	}
+};
+
+
+
+
+
 /* Get IPv4 Network Data */
 IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	
