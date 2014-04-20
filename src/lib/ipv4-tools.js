@@ -17,11 +17,111 @@
 
 IPv4Tools = function(){
 	
-	// importing required external dependencies
-	this.ipapi = 'http://ip-api.com/json/';
-	this.async = require('async');
-	this.http = require('http');
-	this.dns = require('dns');
+	// declaring required holders && external dependencies
+	this.ipapi = 'http://ip-api.com/json/'; // IP-API GEOLOCATION SERVICE
+	this.cymruASN = '.asn.cymru.com'; // TEAM CYMRU IP TO ASN SERVICE
+	this.cymruOrigin = '.origin.asn.cymru.com'; // TEAM CYMRU SERVICE
+	this.cymruPeers = '.peers.asn.cymru.com'; // TEAM CYMRU SERVICE
+	this.zenSpamHaus = '.zen.spamhaus.org';
+	this.abuseCBL = '.cbl.abuseat.org';
+	this.async = require('async'), http = require('http'), this.dns = require('dns');
+	
+	
+	// SpamHaus Reputation Check
+	this.SpamHausRep = function(ipv4, callback){
+		
+		// validating gathered data
+		if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
+		else{
+			
+			// reversing gathered ip, appending spamhaus ZEN dns url
+	        var ip = ipv4.split(".");
+	        ip = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + this.zenSpamHaus;
+	        
+	        // check ip on spamhaus ZEN DNSBL
+	        this.dns.resolve(ip, 'A', function(error, address)
+	        {   
+	        	// fail safe bail out
+	        	//if(error){console.log(error);}
+	        	
+	            // checking gathered dns result
+	            if(!address){callback(null, false);}
+	            else{
+	                // sweeping result
+	                address.forEach(function(rephost)
+	                {
+	                    // checking host for score matching
+	                    switch(rephost)
+	                    {   
+	                        // SH1 HOSTS
+	                        case '127.0.0.2':
+	                            callback(null, 2);
+	                            break;
+	    
+	                        // SH2 HOSTS
+	                        case '127.0.0.3':
+	                            callback(null, 3);
+	                            break;
+	    
+	                        // SH3 HOSTS
+	                        case '127.0.0.10':
+	                        case '127.0.0.11':
+	                            callback(null, 4);
+	                            break;
+	                            
+	                        // HH1 HOSTS
+	                        case '127.0.0.4':
+	                        case '127.0.0.5':
+	                        case '127.0.0.6':
+	                        case '127.0.0.7':
+	                            callback(null, 5);
+	                            break;
+	    
+	                        // NH0 HOSTS
+	                        default: 
+	                            callback(null, 1);
+	                            break;
+	                    }        
+	                });
+	            }
+	        });
+		}
+	};
+	
+	
+	
+	
+	
+	// CBL Reputation Check
+	this.CblRep = function(ipv4, callback){
+		
+		// validating gathered data
+		if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
+		else{
+			
+			// reversing gathered ip
+	        var ip = ipv4.split(".");
+	        ip = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + this.abuseCBL;
+	        
+	        // check ip on CBL DNSBL
+	        this.dns.resolve(ip, 'A', function(error, address)
+	        {
+	        	// fail safe bail out
+	        	//if(error){console.log(error);}
+	        	
+	            // checking gathered dns result
+	            if(!address){callback(null, false);}
+	            else{
+	                // sweeping result
+	                address.forEach(function(rephost)
+	                {
+	                    if(rephost === '127.0.0.2'){callback(null, 2);}
+	                    else{callback(null, 1);}
+	                });
+	            }
+	        });
+		}
+	};
 };
 
 
@@ -124,11 +224,11 @@ IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 		ipv4 = ipv4.split('.');
 		
 		/*ipv4 class match*/
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 0) && (parseInt(ipv4[0].trim()) <= 127)){ipv4 = null; callback(null, 'A');} // class A ipv4
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 127) && (parseInt(ipv4[0].trim()) <= 191)){ipv4 = null; callback(null, 'B');} // class B ipv4
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 191) && (parseInt(ipv4[0].trim()) <=  223)){ipv4 = null; callback(null, 'C');} // class C ipv4
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 223) && (parseInt(ipv4[0].trim()) <= 239)){ipv4 = null; callback(null, 'D');} // class D ipv4
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 239) && (parseInt(ipv4[0].trim()) <= 247)){ipv4 = null; callback(null, 'E');} // class E ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 0) && (parseInt(ipv4[0].trim()) <= 127)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'A'});} // class A ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 127) && (parseInt(ipv4[0].trim()) <= 191)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'B'});} // class B ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 191) && (parseInt(ipv4[0].trim()) <=  223)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'C'});} // class C ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 223) && (parseInt(ipv4[0].trim()) <= 239)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'D'});} // class D ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 239) && (parseInt(ipv4[0].trim()) <= 247)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'E'});} // class E ipv4
 		if(ipv4 !== null){callback(null, false);} // fail safe bail out
 	}
 };
@@ -138,18 +238,24 @@ IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 
 
 
-/* Get IPv4 Network Data */
+/* 
+ * -------------------------
+ * Get IPv4 Network Data 
+ * -------------------------
+ * Currently using Team Cymru service
+ * Check their work and services @ https://www.team-cymru.org/
+ */
 IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	
 	// validating gathered data
 	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
 	else{
 		
-		// declaring needed holders
-		var buffer = {ip: ipv4}, dns = this.dns, ip = ipv4.split(".");
-	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + '.origin.asn.cymru.com';      
-	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + '.peer.asn.cymru.com';
-	    var provider = buffer['asn'] + '.asn.cymru.com';
+		// setup required holders
+		var buffer = {ip: ipv4}, dns = this.dns, ip = ipv4.split("."), origin = this.cymruOrigin, as = this.cymruASN, peers = this.cymruPeers;
+	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + origin;      
+	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + peers;
+	    var provider = buffer['asn'] + as;
 	    
 	    
 	    /*
@@ -217,7 +323,7 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        function(asn, callback){
 	            
 	            // gather asn / provider details
-	            dns.resolveTxt('AS'+ asn + '.asn.cymru.com', function(err, dnsresult){
+	            dns.resolveTxt('AS'+ asn + as, function(err, dnsresult){
 	                if(err) return;
 	                
 	                // sweeping result
@@ -265,6 +371,7 @@ IPv4Tools.prototype.getGeoLocation = function(ipv4, callback){
 		// executing http GET request to ip api
 		this.http.get(this.ipapi+ipv4, function(res){
 			
+			// declaring incoming chunks buff and collecting response 
 			var data = '';
 			res.on('data', function(chunk){data += chunk;});// while gathering response, build up data buff
 			res.on('end', function(){data = JSON.parse(data); delete data['isp', 'as', 'query']; callback(null, data);}); // parse, clean and callback data
@@ -284,11 +391,10 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 	if(((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === "") || (ipv4.length <= 0) || (ipv4.length > 16))){callback(null, false);}
 	else{
 		
-		// declaring data holder
-		var dnsdata = {};
-		var async = this.async;
-		var dns = this.dns;
+		// declaring data holder and links to upper scope stuff
+		var dnsdata = {}, async = this.async, dns = this.dns;
 		
+		// reverse DNS querying about desired ipv4
 		dns.reverse(ipv4, function(error, dnsrev){
 			
 			// fail safe bail out
@@ -332,5 +438,40 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 
 
 
-// exporting prototype
+/*
+ * -------------------------
+ * Check IPv4 Reputation
+ * -------------------------
+ * Currently supported services:
+ * 
+ * 		-- SpamHaus (Mostly Spam, has some other reputation badges)
+ * 		-- CBL DNSBL (Spam related)
+ * 
+ * suggest other services to undertuga[at]gmail[dot]com
+ */
+IPv4Tools.prototype.checkReputation = function(ipv4, callback){
+	
+	// validating gathered data
+	if(((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === "") || (ipv4.length <= 0) || (ipv4.length > 16))){callback(null, false);}
+	else{
+		
+		// executing parallel dns querys to supported services
+		var scope = this;
+		scope.async.parallel([
+			function(innercall){scope.SpamHausRep(ipv4, function(error, shrep){innercall(null, shrep);});},
+			function(innercall){scope.CblRep(ipv4, function(error, cblrep){innercall(null, cblrep);});}
+			
+		], function(error, res){
+			
+			// fail safe bail out
+			if(error){callback(error);}
+			if(!res){callback(null, false);}else{callback(null, {ip: ipv4, spamhaus: res[0], cbl: res[1], tstamp: new Date()});}
+		});
+	}
+};
+
+
+
+
+// exporting prototypes
 exports.IPv4Tools = IPv4Tools;

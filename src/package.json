@@ -1,8 +1,8 @@
 {
   "author": "undertuga",
   "name": "ipv4-tools",
-  "description": "ipv4 toolkit",
-  "version": "0.1.2",
+  "description": "IPv4 toolkit for NodeJS",
+  "version": "0.1.3",
   "license" : "MIT",
   "repository": {
 	"type" : "git",
@@ -17,7 +17,9 @@
     "tcp",
     "scanner",
     "reputation", 
-    "dns"
+    "dns",
+    "cidr",
+    "asn"
   ],
   "bin": {
     "uppercaseme": "./bin/ipv4-tools"
