@@ -14,7 +14,10 @@
 
 
 
-
+/* 
+ * THA SPOT 
+ * - Main 
+ */
 IPv4Tools = function(){
 	
 	// declaring required holders && external dependencies
@@ -129,6 +132,18 @@ IPv4Tools = function(){
 
 
 
+
+
+
+
+/* "PROTOTYPING" ZONE */
+
+
+
+
+
+
+
 /*
  * Name: generateIPv4
  * Detail: Generates random IPv4 address according to desired class!
@@ -191,7 +206,10 @@ IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 
 
 
-/* IPv4 Validation Prototype */
+/* 
+ * IPv4 Validation Prototype
+ * (boolean response)
+ */
 IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 	
 	// validating gathered data
@@ -213,7 +231,10 @@ IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 
 
 
-/*Get IPv4 Class*/
+/*
+ * Get IPv4 Class
+ * (returns class type as string)
+ */
 IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 	
 	// validating gathered data
@@ -244,6 +265,8 @@ IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
  * -------------------------
  * Currently using Team Cymru service
  * Check their work and services @ https://www.team-cymru.org/
+ * 
+ * returns object with ipv4 network related data
  */
 IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	
@@ -282,8 +305,6 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                    var data = dnsres.split('|');
 	                    buffer['cidr'] = data[1].trim();
 	                    buffer['asn'] = data[0].trim();
-	                    buffer['country'] = data[2].trim();
-	                    buffer['reputation'] = 0;
 	                });
 	                
 	                // bail out current waterfall operation
@@ -361,7 +382,11 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 
 
 
-/* Get IPv4 Geolocation */
+/* 
+ * Get IPv4 Geolocation 
+ * 
+ * returns object with ipv4 geolocation data
+ */
 IPv4Tools.prototype.getGeoLocation = function(ipv4, callback){
 	
 	// validating gathered data
@@ -384,7 +409,11 @@ IPv4Tools.prototype.getGeoLocation = function(ipv4, callback){
 
 
 
-/* Get IPv4 DNS related data */
+/* 
+ * Get IPv4 DNS related data
+ * 
+ * returns object with dns related data about given ipv4
+ */
 IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 	
 	// validating gathered data
@@ -448,6 +477,8 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
  * 		-- CBL DNSBL (Spam related)
  * 
  * suggest other services to undertuga[at]gmail[dot]com
+ * 
+ * returns object with gathered ipv4 reputation related data
  */
 IPv4Tools.prototype.checkReputation = function(ipv4, callback){
 	
@@ -458,17 +489,22 @@ IPv4Tools.prototype.checkReputation = function(ipv4, callback){
 		// executing parallel dns querys to supported services
 		var scope = this;
 		scope.async.parallel([
-			function(innercall){scope.SpamHausRep(ipv4, function(error, shrep){innercall(null, shrep);});},
-			function(innercall){scope.CblRep(ipv4, function(error, cblrep){innercall(null, cblrep);});}
+          
+          // invoquing reputation check functions
+          function(innercall){scope.SpamHausRep(ipv4, function(error, shrep){innercall(null, shrep);});}, // checking SpamHaus
+          function(innercall){scope.CblRep(ipv4, function(error, cblrep){innercall(null, cblrep);});} // checking CBL DNSBL
 			
 		], function(error, res){
 			
-			// fail safe bail out
+			// fail safe bail out || return gathered reputation data
+			scope = null;
 			if(error){callback(error);}
 			if(!res){callback(null, false);}else{callback(null, {ip: ipv4, spamhaus: res[0], cbl: res[1], tstamp: new Date()});}
 		});
 	}
 };
+
+
 
 
 
