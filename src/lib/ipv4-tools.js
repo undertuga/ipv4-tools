@@ -27,7 +27,7 @@ IPv4Tools = function(){
 	this.cymruPeers = '.peer.asn.cymru.com'; // TEAM CYMRU SERVICE
 	this.zenSpamHaus = '.zen.spamhaus.org';
 	this.abuseCBL = '.cbl.abuseat.org';
-	this.async = require('async'), http = require('http'), this.dns = require('dns');
+	this.async = require('async'), this.http = require('http'), this.dns = require('dns');
 	
 	
 	// SpamHaus Reputation Check
