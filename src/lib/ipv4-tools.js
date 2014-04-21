@@ -24,7 +24,7 @@ IPv4Tools = function(){
 	this.ipapi = 'http://ip-api.com/json/'; // IP-API GEOLOCATION SERVICE
 	this.cymruASN = '.asn.cymru.com'; // TEAM CYMRU IP TO ASN SERVICE
 	this.cymruOrigin = '.origin.asn.cymru.com'; // TEAM CYMRU SERVICE
-	this.cymruPeers = '.peers.asn.cymru.com'; // TEAM CYMRU SERVICE
+	this.cymruPeers = '.peer.asn.cymru.com'; // TEAM CYMRU SERVICE
 	this.zenSpamHaus = '.zen.spamhaus.org';
 	this.abuseCBL = '.cbl.abuseat.org';
 	this.async = require('async'), http = require('http'), this.dns = require('dns');
@@ -274,41 +274,39 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
 	else{
 		
-		// setup required holders
-		var buffer = {ip: ipv4}, dns = this.dns, ip = ipv4.split("."), origin = this.cymruOrigin, as = this.cymruASN, peers = this.cymruPeers;
-	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + origin;      
-	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + peers;
-	    var provider = buffer['asn'] + as;
+		// declaring required holders and references!
+		var buffer = {ip: ipv4}, cymru = this, ip = ipv4.split(".");
+	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + cymru.cymruOrigin;      
+	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + cymru.cymruPeers;
+	    var provider = buffer['asn'] + cymru.cymruASN;
+	    
 	    
 	    
 	    /*
 	     * ASYNC WATERFALL SEQUENCE
 	     * Sweeping Ipv4 data, step by step...
-	     * ---less bully activity @ the dns's, less red flags will rise up!
-	     * ---parallel it or whatever you want, not my problem if somehow shit hits the fan.
 	     */
 	    this.async.waterfall([
-	        
+  
+  
          /*
           * Gather main data
           */
 	        function(callback){
 	            
 	            // gather ip data...
-	            dns.resolveTxt(origin, function(err, dnsresult){
-	                if(err) return;
-	                
+	            cymru.dns.resolveTxt(origin, function(err, dnsresult){
+	                if(err){return;}
+	       
 	                // sweeping dns result
 	                dnsresult.forEach(function(dnsres){
 	                    
-	                    // split gathered result and collect to buffer
+	                    // split gathered result
 	                    var data = dnsres.split('|');
 	                    buffer['cidr'] = data[1].trim();
 	                    buffer['asn'] = data[0].trim();
+	                    callback(null, buffer['asn']);
 	                });
-	                
-	                // bail out current waterfall operation
-                    callback(null, buffer['asn'].trim());
 	            });
 	        },
 	        
@@ -319,23 +317,24 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        function(asn, callback){
 	        
 	            // gather asn peers data
-	            dns.resolveTxt(peers, function(err, dnsresult){
-	                if(err) return;
+	            cymru.dns.resolveTxt(peers, function(err, dnsresult){
+	                if(err){return;}
 	                
 	                // sweeping result
 	                dnsresult.forEach(function(dnsres){
 	                    
-	                    // extracting data from dns result and collect asn peers to buffer
+	                    // extracting data from dns result
 	                    var data = dnsres.split('|');
 	                    data = data[0].split(' ');
 	                    data.pop();
 	                    buffer['asnpeers'] = data;
+	                    callback(null, asn);
 	                });
-
-	                // bail out current waterfall operation
-                    callback(null, asn);
 	            });  
 	        },
+	        
+	        
+	        
 	        
 	        
 	        /*
@@ -344,20 +343,18 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        function(asn, callback){
 	            
 	            // gather asn / provider details
-	            dns.resolveTxt('AS'+ asn + as, function(err, dnsresult){
-	                if(err) return;
+	            cymru.dns.resolveTxt('AS'+ asn + cymru.cymruASN, function(err, dnsresult){
+	                if(err){return;}
 	                
 	                // sweeping result
 	                dnsresult.forEach(function(dnsres){
 	                    
-	                    // extracting data from dns result and collect provider to buffer
+	                    // extracting data from dns result
 	                    var data = dnsres.split('|');
 	                    buffer['provider'] = data[4].trim();
 	                    buffer['tstamp'] = new Date();
+	                    callback(null, true);
 	                });
-
-	                // bail out current waterfall operation
-                    callback(null, true);
 	            });
 	        }
 	        
@@ -366,7 +363,7 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	    ], function(error, results){
 	    	
 	    		// fail safe bail out
-	            if(error){callback(error);}
+	            if(error){return;}
 	            
 	            // validating result
 	            if(!results){callback(null, false);}
