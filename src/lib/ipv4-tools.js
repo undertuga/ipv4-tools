@@ -464,6 +464,8 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 
 
 
+
+
 /*
  * -------------------------
  * Check IPv4 Reputation
@@ -506,5 +508,49 @@ IPv4Tools.prototype.checkReputation = function(ipv4, callback){
 
 
 
+
+
+
+IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
+	
+	// validating gathered data
+	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
+	else{
+
+		// spliting gathered ipv4
+		var ipv4 = ipv4.split('.');
+		var ipInt = (ipv4[0]*16777216)+(ipv4[1]*65536)+(ipv4[2]*256)+ipv4[3];
+		callback(null, ipInt);
+	}
+};
+
+
+
+
+
+
+IPv4Tools.prototype.integerToIPv4 = function(number, callback){
+	
+	// validating gathered data
+	if((typeof(number) === 'undefined') || (number === null) || (number === '') || (number.length <= 0) || (number.length > 16)){callback(null, false);}
+	else{
+		
+		// reconstructing IPv4 from integer
+		var oc1 = (number / 1677216);// defining 1st octet
+		var ip = (number - (oc1*16777216));
+		var oc2 = (ip / 65536); // defining 2nd octet
+		ip = (ip - (oc2*65536));
+		var oc3 = (ip / 256); // defining 3rd octet
+		var oc4 = (ip - (oc3 * 256)); // defining 4th octet
+		ip = oc1+'.'+oc2+'.'+oc3+'.'+oc4; // concat octets
+		callback(null, ip); // return reconstructed IPv4
+	}
+};
+
+
+
+
+
+V 
 // exporting prototypes
 exports.IPv4Tools = IPv4Tools;
