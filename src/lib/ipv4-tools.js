@@ -519,8 +519,7 @@ IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
 
 		// spliting gathered ipv4
 		var ipv4 = ipv4.split('.');
-		var ipInt = ((((((+ipv4[0])*256)+(+ipv4[1]))*256)+(+ipv4[2]))*256)+(+ipv4[3]); // merging octets
-		callback(null, ipInt);
+		callback(null, ((((((+ipv4[0])*256)+(+ipv4[1]))*256)+(+ipv4[2]))*256)+(+ipv4[3])); // return merged octets calculation
 	}
 };
 
@@ -531,8 +530,8 @@ IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
 
 IPv4Tools.prototype.integerToIPv4 = function(number, callback){
 	
-	// validating gathered data
-	if((typeof(number) === 'undefined') || (number === null) || (number === '') || (number.length <= 0) || (number.length > 16)){callback(null, false);}
+	// validating gathered data (min & max ipv4 integer representations)
+	if((typeof(number) === 'undefined') || (number === null) || (number === '') || (number <= 0) || (number > 4294967295)){callback(null, false);}
 	else{
 		
 		// reconstructing IPv4 from integer
