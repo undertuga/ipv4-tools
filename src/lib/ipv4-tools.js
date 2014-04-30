@@ -519,7 +519,7 @@ IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
 
 		// spliting gathered ipv4
 		var ipv4 = ipv4.split('.');
-		var ipInt = (ipv4[0]*16777216)+(ipv4[1]*65536)+(ipv4[2]*256)+ipv4[3];
+		var ipInt = ((((((+ipv4[0])*256)+(+ipv4[1]))*256)+(+ipv4[2]))*256)+(+ipv4[3]); // merging octets
 		callback(null, ipInt);
 	}
 };
@@ -536,14 +536,9 @@ IPv4Tools.prototype.integerToIPv4 = function(number, callback){
 	else{
 		
 		// reconstructing IPv4 from integer
-		var oc1 = (number / 1677216);// defining 1st octet
-		var ip = (number - (oc1*16777216));
-		var oc2 = (ip / 65536); // defining 2nd octet
-		ip = (ip - (oc2*65536));
-		var oc3 = (ip / 256); // defining 3rd octet
-		var oc4 = (ip - (oc3 * 256)); // defining 4th octet
-		ip = oc1+'.'+oc2+'.'+oc3+'.'+oc4; // concat octets
-		callback(null, ip); // return reconstructed IPv4
+		var base = number%256; // 1st split
+		for(var x = 3; x > 0; x--){number = Math.floor(number/256); base = number%256 + '.' + base;} // sweeping remaining octets
+		callback(null, base);
 	}
 };
 
@@ -551,6 +546,6 @@ IPv4Tools.prototype.integerToIPv4 = function(number, callback){
 
 
 
-V 
+
 // exporting prototypes
 exports.IPv4Tools = IPv4Tools;
