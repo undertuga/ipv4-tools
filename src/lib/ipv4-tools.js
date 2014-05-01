@@ -545,6 +545,5 @@ IPv4Tools.prototype.integerToIPv4 = function(number, callback){
 
 
 
-
 // exporting prototypes
 exports.IPv4Tools = IPv4Tools;

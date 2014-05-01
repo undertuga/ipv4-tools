@@ -38,4 +38,14 @@
 
 	Checks given IPv4 reputation @ currently provided services!
 	Check it or contact me for further detail or new services suggestions.
+	
+
+-	**ipv4ToInteger(*ipv4, callback*)**
+
+	Converts given Ipv4 address to the correspondent integer value.
+
+
+-	**integerToIPv4(*number, callback*)**
+
+	Converts given integer value to correspondent IPv4 address.
 ***
