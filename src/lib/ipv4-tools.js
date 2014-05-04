@@ -30,7 +30,17 @@ IPv4Tools = function(){
 	this.async = require('async'), this.http = require('http'), this.dns = require('dns');
 	
 	
-	// SpamHaus Reputation Check
+	
+	/**
+	 * SpamHaus Reputation Check
+	 * ------------------------------------
+	 * Perform DNS query to SpamHaus DNSBL
+	 * evaluation if given IPv4 is listed
+	 * ------------------------------------
+	 * @param {String} ipv4 
+	 * @param {Function} callback
+	 * @return {Number} iprep
+	 */
 	this.SpamHausRep = function(ipv4, callback){
 		
 		// validating gathered data
@@ -95,7 +105,16 @@ IPv4Tools = function(){
 	
 	
 	
-	// CBL Reputation Check
+	/**
+	 * CBL Reputation Check
+	 * ------------------------------------
+	 * Perform DNS query to CBL DNSBL
+	 * evaluation if given IPv4 is listed
+	 * ------------------------------------
+	 * @param {String} ipv4 
+	 * @param {Function} callback
+	 * @return {Number} iprep
+	 */
 	this.CblRep = function(ipv4, callback){
 		
 		// validating gathered data
@@ -144,11 +163,17 @@ IPv4Tools = function(){
 
 
 
-/*
- * Name: generateIPv4
- * Detail: Generates random IPv4 address according to desired class!
- * Receives: IPv4 class(string) | class A to E; R to random
- * Returns: false(bool) on failure / error | IPv4 address (string)
+/**
+ * Generate IPv4
+ * -----------------------------------------
+ * Generates random IPv4 address according
+ * to given class (A to E)! Random class
+ * generation is possible passing R class!
+ * -----------------------------------------
+ * @param {String} ipclass 
+ * @param {Function} callback
+ * @error {Boolean} false
+ * @return {String} ipv4
  */
 IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 	
@@ -206,9 +231,15 @@ IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 
 
 
-/* 
- * IPv4 Validation Prototype
- * (boolean response)
+/**
+ * Validate IPv4
+ * -----------------------------------------
+ * Validates given Ipv4 Address
+ * -----------------------------------------
+ * @param {String} ipv4 
+ * @param {Function} callback
+ * @error {Boolean} false
+ * @return {Boolean} state
  */
 IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 	
@@ -231,9 +262,15 @@ IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 
 
 
-/*
+/**
  * Get IPv4 Class
- * (returns class type as string)
+ * -----------------------------------------
+ * Get IPv4 address correpondent class
+ * -----------------------------------------
+ * @param {String} ipv4 
+ * @param {Function} callback
+ * @error {Boolean} false
+ * @return {String} class
  */
 IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 	
@@ -259,14 +296,22 @@ IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 
 
 
-/* 
- * -------------------------
- * Get IPv4 Network Data 
- * -------------------------
- * Currently using Team Cymru service
- * Check their work and services @ https://www.team-cymru.org/
+/**
+ * Get IPv4 Network Data
+ * -----------------------------------------
+ * Get IPv4 network data:
+ * - CIDR
+ * - ASN
+ * - PROVIDER
+ * - ETC
  * 
- * returns object with ipv4 network related data
+ * Currently using TeamCymru Service:
+ * http://www.team-cymru.org/
+ * -----------------------------------------
+ * @param {String} ipv4 
+ * @param {Function} callback
+ * @error {Boolean} false
+ * @return {Object} netdata
  */
 IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	
@@ -518,7 +563,7 @@ IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
 	else{
 
 		// spliting gathered ipv4
-		var ipv4 = ipv4.split('.');
+		var ipv4 = ipv4.toString().split('.');
 		callback(null, ((((((+ipv4[0])*256)+(+ipv4[1]))*256)+(+ipv4[2]))*256)+(+ipv4[3])); // return merged octets calculation
 	}
 };

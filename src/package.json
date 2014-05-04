@@ -2,7 +2,7 @@
   "author": "undertuga",
   "name": "ipv4-tools",
   "description": "IPv4 toolkit for NodeJS",
-  "version": "0.1.4-a",
+  "version": "0.1.4-b",
   "license" : "MIT",
   "repository": {
 	"type" : "git",
@@ -13,7 +13,6 @@
     "ip",
     "geolocation",
     "ipv4",
-    "ipv6",
     "network",
     "tcp",
     "scanner",
