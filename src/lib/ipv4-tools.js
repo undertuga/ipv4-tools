@@ -463,7 +463,7 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 	else{
 		
 		// declaring data holder and links to upper scope stuff
-		var dnsdata = {}, async = this.async, dns = this.dns;
+		var dnsdata = {}, dcnt = 0, async = this.async, dns = this.dns;
 		
 		// reverse DNS querying about desired ipv4
 		dns.reverse(ipv4, function(error, dnsrev){
@@ -486,7 +486,8 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 							else{
 								
 								// adding data to holder
-								dnsdata[domain] = address;
+								dnsdata[dcnt] = {'domain': domain, 'address': address};
+								dcnt++;
 								callback(null, true);
 							}
 						});
