@@ -2,7 +2,7 @@
 ####IPv4 toolkit for NodeJS (NPM package)
 ***
 
-######v0.1.4 available prototypes:
+######v0.1.4-x available prototypes:
 
 - **generateIPv4(*class, callback*)**
 

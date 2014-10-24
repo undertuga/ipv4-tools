@@ -2,7 +2,7 @@
   "author": "undertuga",
   "name": "ipv4-tools",
   "description": "IPv4 toolkit for NodeJS",
-  "version": "0.1.4-c",
+  "version": "0.1.4-e",
   "license" : "MIT",
   "repository": {
 	"type" : "git",

@@ -350,6 +350,7 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                    var data = dnsres.split('|');
 	                    buffer['cidr'] = data[1].trim();
 	                    buffer['asn'] = data[0].trim();
+	                    buffer['country'] = data[2].trim();
 	                    callback(null, buffer['asn']);
 	                });
 	            });
