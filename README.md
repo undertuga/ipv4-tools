@@ -2,7 +2,7 @@
 ####IPv4 toolkit for NodeJS (NPM package)
 ***
 
-######v0.1.4-x available prototypes:
+######v0.1.5-x available prototypes:
 
 - **generateIPv4(*class, callback*)**
 
@@ -33,12 +33,6 @@
 
 	Collect IPv4 DNS related data.
 
-
--	**checkReputation(*ipv4, callback*)**
-
-	Checks given IPv4 reputation @ currently provided services!
-	Check it or contact me for further detail or new services suggestions.
-	
 
 -	**ipv4ToInteger(*ipv4, callback*)**
 

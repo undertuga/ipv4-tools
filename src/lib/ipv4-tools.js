@@ -1,12 +1,17 @@
 /*
  * ==============================================================
- * 		IPv4-Tools
+ * 						IPv4-Tools (v0.1.5)
  * ==============================================================
- * 		IPv4 Toolkit for NodeJS
+ * 	
+ * 	IPv4 utility functions toolkit developed for use on
+ * 	Node.JS network related projects. 
+ * 
  * ==============================================================
- * License: MIT (check attached file)
- * Author: undertuga[at]gmail[dot]com
- * RepURL: https://github.com/undertuga/ipv4-tools
+ * 
+ * 	License: MIT (check attached file)
+ * 	Author: undertuga[at]gmail[dot]com
+ * 	RepURL: https://github.com/undertuga/ipv4-tools
+ * 
  * ==============================================================
  */
 
@@ -15,135 +20,17 @@
 
 
 /* 
- * THA SPOT 
- * - Main 
+ * IPv4 Tools - Prototypes Holder 
+ * ------------------------------
  */
+ 
 IPv4Tools = function(){
 	
 	// declaring required holders && external dependencies
-	this.ipapi = 'http://ip-api.com/json/'; // IP-API GEOLOCATION SERVICE
 	this.cymruASN = '.asn.cymru.com'; // TEAM CYMRU IP TO ASN SERVICE
 	this.cymruOrigin = '.origin.asn.cymru.com'; // TEAM CYMRU SERVICE
 	this.cymruPeers = '.peer.asn.cymru.com'; // TEAM CYMRU SERVICE
-	this.zenSpamHaus = '.zen.spamhaus.org';
-	this.abuseCBL = '.cbl.abuseat.org';
 	this.async = require('async'), this.http = require('http'), this.dns = require('dns');
-	
-	
-	
-	/**
-	 * SpamHaus Reputation Check
-	 * ------------------------------------
-	 * Perform DNS query to SpamHaus DNSBL
-	 * evaluation if given IPv4 is listed
-	 * ------------------------------------
-	 * @param {String} ipv4 
-	 * @param {Function} callback
-	 * @return {Number} iprep
-	 */
-	this.SpamHausRep = function(ipv4, callback){
-		
-		// validating gathered data
-		if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
-		else{
-			
-			// reversing gathered ip, appending spamhaus ZEN dns url
-	        var ip = ipv4.split(".");
-	        ip = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + this.zenSpamHaus;
-	        
-	        // check ip on spamhaus ZEN DNSBL
-	        this.dns.resolve(ip, 'A', function(error, address)
-	        {   
-	        	// fail safe bail out
-	        	//if(error){console.log(error);}
-	        	
-	            // checking gathered dns result
-	            if(!address){callback(null, false);}
-	            else{
-	                // sweeping result
-	                address.forEach(function(rephost)
-	                {
-	                    // checking host for score matching
-	                    switch(rephost)
-	                    {   
-	                        // SH1 HOSTS
-	                        case '127.0.0.2':
-	                            callback(null, 2);
-	                            break;
-	    
-	                        // SH2 HOSTS
-	                        case '127.0.0.3':
-	                            callback(null, 3);
-	                            break;
-	    
-	                        // SH3 HOSTS
-	                        case '127.0.0.10':
-	                        case '127.0.0.11':
-	                            callback(null, 4);
-	                            break;
-	                            
-	                        // HH1 HOSTS
-	                        case '127.0.0.4':
-	                        case '127.0.0.5':
-	                        case '127.0.0.6':
-	                        case '127.0.0.7':
-	                            callback(null, 5);
-	                            break;
-	    
-	                        // NH0 HOSTS
-	                        default: 
-	                            callback(null, 1);
-	                            break;
-	                    }        
-	                });
-	            }
-	        });
-		}
-	};
-	
-	
-	
-	
-	
-	/**
-	 * CBL Reputation Check
-	 * ------------------------------------
-	 * Perform DNS query to CBL DNSBL
-	 * evaluation if given IPv4 is listed
-	 * ------------------------------------
-	 * @param {String} ipv4 
-	 * @param {Function} callback
-	 * @return {Number} iprep
-	 */
-	this.CblRep = function(ipv4, callback){
-		
-		// validating gathered data
-		if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
-		else{
-			
-			// reversing gathered ip
-	        var ip = ipv4.split(".");
-	        ip = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + this.abuseCBL;
-	        
-	        // check ip on CBL DNSBL
-	        this.dns.resolve(ip, 'A', function(error, address)
-	        {
-	        	// fail safe bail out
-	        	//if(error){console.log(error);}
-	        	
-	            // checking gathered dns result
-	            if(!address){callback(null, false);}
-	            else{
-	                // sweeping result
-	                address.forEach(function(rephost)
-	                {
-	                    if(rephost === '127.0.0.2'){callback(null, 2);}
-	                    else{callback(null, 1);}
-	                });
-	            }
-	        });
-		}
-	};
 };
 
 
@@ -155,26 +42,24 @@ IPv4Tools = function(){
 
 
 
-/* "PROTOTYPING" ZONE */
+/* PROTOTYPE ZONE */
 
-
-
-
-
-
-
-/**
+/*
  * Generate IPv4
- * -----------------------------------------
+ * -------------------------------------------
  * Generates random IPv4 address according
  * to given class (A to E)! Random class
- * generation is possible passing R class!
- * -----------------------------------------
+ * generation is possible passing R as class.
+ * -------------------------------------------
+ * 
  * @param {String} ipclass 
  * @param {Function} callback
  * @error {Boolean} false
  * @return {String} ipv4
+ * 
+ * -------------------------------------------
  */
+ 
 IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 	
 	// validating gathered ip class
@@ -231,16 +116,20 @@ IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 
 
 
-/**
+/*
  * Validate IPv4
  * -----------------------------------------
  * Validates given Ipv4 Address
  * -----------------------------------------
+ * 
  * @param {String} ipv4 
  * @param {Function} callback
  * @error {Boolean} false
  * @return {Boolean} state
+ * 
+ * -----------------------------------------
  */
+ 
 IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 	
 	// validating gathered data
@@ -262,16 +151,20 @@ IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 
 
 
-/**
+/*
  * Get IPv4 Class
  * -----------------------------------------
  * Get IPv4 address correpondent class
  * -----------------------------------------
+ * 
  * @param {String} ipv4 
  * @param {Function} callback
  * @error {Boolean} false
  * @return {String} class
+ * 
+ * ------------------------------------------
  */
+ 
 IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 	
 	// validating gathered data
@@ -281,7 +174,7 @@ IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 		// explode gathered ipv4 address
 		ipv4 = ipv4.split('.');
 		
-		/*ipv4 class match*/
+		/* ipv4 class match */
 		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 0) && (parseInt(ipv4[0].trim()) <= 127)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'A'});} // class A ipv4
 		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 127) && (parseInt(ipv4[0].trim()) <= 191)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'B'});} // class B ipv4
 		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 191) && (parseInt(ipv4[0].trim()) <=  223)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'C'});} // class C ipv4
@@ -296,23 +189,28 @@ IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 
 
 
-/**
+/*
  * Get IPv4 Network Data
  * -----------------------------------------
  * Get IPv4 network data:
  * - CIDR
  * - ASN
- * - PROVIDER
- * - ETC
+ * - ASN Peers
+ * - ASN Label / Info
+ * - Country
  * 
  * Currently using TeamCymru Service:
  * http://www.team-cymru.org/
  * -----------------------------------------
+ * 
  * @param {String} ipv4 
  * @param {Function} callback
  * @error {Boolean} false
  * @return {Object} netdata
+ * 
+ * -----------------------------------------
  */
+ 
 IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	
 	// validating gathered data
@@ -346,11 +244,13 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                // sweeping dns result
 	                dnsresult.forEach(function(dnsres){
 	                    
-	                    // split gathered result
+	                    // split & gather data
 	                    var data = dnsres.split('|');
 	                    buffer['cidr'] = data[1].trim();
 	                    buffer['asn'] = data[0].trim();
 	                    buffer['country'] = data[2].trim();
+	                    
+	                    // return asn to next step
 	                    callback(null, buffer['asn']);
 	                });
 	            });
@@ -374,6 +274,8 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                    data = data[0].split(' ');
 	                    data.pop();
 	                    buffer['asnpeers'] = data;
+	                    
+	                    // return asn to next step
 	                    callback(null, asn);
 	                });
 	            });  
@@ -399,6 +301,8 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                    var data = dnsres.split('|');
 	                    buffer['provider'] = data[4].trim();
 	                    buffer['tstamp'] = new Date();
+	                    
+	                    // return async ops state
 	                    callback(null, true);
 	                });
 	            });
@@ -425,38 +329,24 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 
 
 
-/* 
- * Get IPv4 Geolocation 
- * 
- * returns object with ipv4 geolocation data
- */
-IPv4Tools.prototype.getGeoLocation = function(ipv4, callback){
-	
-	// validating gathered data
-	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
-	else{
-		
-		// executing http GET request to ip api
-		this.http.get(this.ipapi+ipv4, function(res){
-			
-			// declaring incoming chunks buff and collecting response 
-			var data = '';
-			res.on('data', function(chunk){data += chunk;});// while gathering response, build up data buff
-			res.on('end', function(){data = JSON.parse(data); delete data['isp', 'as', 'query']; callback(null, data);}); // parse, clean and callback data
-			
-		}).on('error', function(error){callback(error);});// fail safe bail out
-	}
-};
-
 
 
 
 
 /* 
  * Get IPv4 DNS related data
+ * -----------------------------------------------------
+ * Returns object with dns related data about given ipv4
+ * -----------------------------------------------------
  * 
- * returns object with dns related data about given ipv4
+ * @param {String} ipv4 
+ * @param {Function} callback
+ * @error {Boolean} false
+ * @return {Object} dnsdata
+ * 
+ * ------------------------------------------------------
  */
+ 
 IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 	
 	// validating gathered data
@@ -513,49 +403,21 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 
 
 
+
+
 /*
- * -------------------------
- * Check IPv4 Reputation
- * -------------------------
- * Currently supported services:
+ * IPv4 To Integer
+ * ---------------------------------------------
+ * Converts given ipv4 address to integer value 
+ * ---------------------------------------------
  * 
- * 		-- SpamHaus (Mostly Spam, has some other reputation badges)
- * 		-- CBL DNSBL (Spam related)
+ * @param {String} ipv4 
+ * @param {Function} callback
+ * @error {Boolean} false
+ * @return {Integer} integerIPv4
  * 
- * suggest other services to undertuga[at]gmail[dot]com
- * 
- * returns object with gathered ipv4 reputation related data
+ * ---------------------------------------------
  */
-IPv4Tools.prototype.checkReputation = function(ipv4, callback){
-	
-	// validating gathered data
-	if(((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === "") || (ipv4.length <= 0) || (ipv4.length > 16))){callback(null, false);}
-	else{
-		
-		// executing parallel dns querys to supported services
-		var scope = this;
-		scope.async.parallel([
-          
-          // invoquing reputation check functions
-          function(innercall){scope.SpamHausRep(ipv4, function(error, shrep){innercall(null, shrep);});}, // checking SpamHaus
-          function(innercall){scope.CblRep(ipv4, function(error, cblrep){innercall(null, cblrep);});} // checking CBL DNSBL
-			
-		], function(error, res){
-			
-			// fail safe bail out || return gathered reputation data
-			scope = null;
-			if(error){callback(error);}
-			if(!res){callback(null, false);}else{callback(null, {ip: ipv4, spamhaus: res[0], cbl: res[1], tstamp: new Date()});}
-		});
-	}
-};
-
-
-
-
-
-
-
 
 
 IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
@@ -575,6 +437,20 @@ IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
 
 
 
+/*
+ * Integer to IPv4
+ * ---------------------------------------------
+ * Converts given integer value to IPv4 address 
+ * ---------------------------------------------
+ * 
+ * @param {Integer} integerIPv4
+ * @param {Function} callback
+ * @error {Boolean} false
+ * @return {String} IPv4 address
+ * 
+ * ---------------------------------------------
+ */
+ 
 IPv4Tools.prototype.integerToIPv4 = function(number, callback){
 	
 	// validating gathered data (min & max ipv4 integer representations)
@@ -592,5 +468,5 @@ IPv4Tools.prototype.integerToIPv4 = function(number, callback){
 
 
 
-// exporting prototypes
+// exporting IPv4 Tools prototypes
 exports.IPv4Tools = IPv4Tools;
