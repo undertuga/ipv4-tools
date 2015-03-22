@@ -220,9 +220,9 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 		// declaring required holders and references!
 		var dns = require('dns');
 		var buffer = {ip: ipv4}, ip = ipv4.split(".");
-	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + cymru.cymruOrigin;      
-	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + cymru.cymruPeers;
-	    var provider = buffer['asn'] + cymru.cymruASN;
+	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + this.cymruOrigin;      
+	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + this.cymruPeers;
+	    var provider = buffer['asn'] + this.cymruASN;
 	    
 	    
 	    
