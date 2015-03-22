@@ -218,7 +218,8 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	else{
 		
 		// declaring required holders and references!
-		var buffer = {ip: ipv4}, cymru = this, ip = ipv4.split(".");
+		var dns = require('dns');
+		var buffer = {ip: ipv4}, ip = ipv4.split(".");
 	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + cymru.cymruOrigin;      
 	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + cymru.cymruPeers;
 	    var provider = buffer['asn'] + cymru.cymruASN;
@@ -238,8 +239,9 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        function(callback){
 	            
 	            // gather ip data...
-	            cymru.dns.resolveTxt(origin, function(err, dnsresult){
-	                if(err){return;}
+	            dns.resolveTxt(origin, function(err, dnsresult){
+	                
+	                if(err){return false;}
 	       
 	                // sweeping dns result
 	                dnsresult.forEach(function(dnsres){
@@ -263,7 +265,7 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        function(asn, callback){
 	        
 	            // gather asn peers data
-	            cymru.dns.resolveTxt(peers, function(err, dnsresult){
+	            dns.resolveTxt(peers, function(err, dnsresult){
 	                if(err){return;}
 	                
 	                // sweeping result
@@ -291,7 +293,7 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        function(asn, callback){
 	            
 	            // gather asn / provider details
-	            cymru.dns.resolveTxt('AS'+ asn + cymru.cymruASN, function(err, dnsresult){
+	            dns.resolveTxt('AS'+ asn + cymru.cymruASN, function(err, dnsresult){
 	                if(err){return;}
 	                
 	                // sweeping result
@@ -354,7 +356,7 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 	else{
 		
 		// declaring data holder and links to upper scope stuff
-		var dnsdata = {}, dcnt = 0, async = this.async, dns = this.dns;
+		var dnsdata = {}, dcnt = 0, async = this.async, dns = require('dns');;
 		
 		// reverse DNS querying about desired ipv4
 		dns.reverse(ipv4, function(error, dnsrev){
