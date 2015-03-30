@@ -1,19 +1,20 @@
 /*
  * ==============================================================
- * 						IPv4-Tools (v0.1.5)
+ * 						IPv4-Tools (v0.2.0)
  * ==============================================================
  * 	
- * 	IPv4 utility functions toolkit developed for use on
- * 	Node.JS network related projects. 
+ * 	IPv4 utility toolkit developed for use on Node.JS / IO.JS
+ * 	network related projects 
  * 
  * ==============================================================
  * 
  * 	License: MIT (check attached file)
- * 	Author: undertuga[at]gmail[dot]com
- * 	RepURL: https://github.com/undertuga/ipv4-tools
+ * 	Author: undertuga[at]tutanota[dot]de
+ * 	GitHub: https://github.com/undertuga/ipv4-tools
  * 
  * ==============================================================
  */
+
 
 
 
@@ -23,20 +24,11 @@
  * IPv4 Tools - Prototypes Holder 
  * ------------------------------
  */
- 
+
 IPv4Tools = function(){
 	
-	// declaring required holders && external dependencies
-	this.cymruASN = '.asn.cymru.com'; // TEAM CYMRU IP TO ASN SERVICE
-	this.cymruOrigin = '.origin.asn.cymru.com'; // TEAM CYMRU SERVICE
-	this.cymruPeers = '.peer.asn.cymru.com'; // TEAM CYMRU SERVICE
-	this.async = require('async'), this.http = require('http'), this.dns = require('dns');
+	
 };
-
-
-
-
-
 
 
 
@@ -63,8 +55,16 @@ IPv4Tools = function(){
 IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 	
 	// validating gathered ip class
-	if((typeof(ipclass) === 'undefined') || (ipclass === null) || (ipclass === '') || (ipclass.length <= 0) || (ipclass.length > 1)){callback(null, false);}
+	if(
+		(typeof(ipclass) === 'undefined') ||
+		(ipclass === null) ||
+		(ipclass === '') ||
+		(ipclass.length <= 0) ||
+		(ipclass.length > 1)
+	)
+	{callback(null, false);}
 	else{
+		
 		// declaring octet's (-1st) holder
 		var octets = '.' + (Math.floor(Math.random() * 255) + 0) + '.' + (Math.floor(Math.random() * 255) + 0) + '.' + (Math.floor(Math.random() * 255) + 0);
 		
@@ -133,19 +133,32 @@ IPv4Tools.prototype.generateIPv4 = function(ipclass, callback){
 IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 	
 	// validating gathered data
-	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
+	if(
+		(typeof(ipv4) === 'undefined') ||
+		(ipv4 === null) || (ipv4 === '') ||
+		(ipv4.length <= 0) ||
+		(ipv4.length > 16)
+		
+	){callback(null, false);}
 	else{
 		
 		// check for valid ipv4 address
 		ipv4.split('.').forEach(function(octect){
-			if((typeof(octect) === 'undefined') || (octect === null) || (octect === '') || ((octect < 0) || (octect > 255))){callback(null, false);}
+			
+			if(
+				(typeof(octect) === 'undefined') ||
+				(octect === null) ||
+				(octect === '') ||
+				((octect < 0) ||
+				(octect > 255))
+				
+			){callback(null, false);}
 		});
 		
 		// return validation state
 		callback(null, true);
 	}
 };
-
 
 
 
@@ -168,21 +181,31 @@ IPv4Tools.prototype.validateIPv4 = function(ipv4, callback){
 IPv4Tools.prototype.getNetworkClass = function(ipv4, callback){
 	
 	// validating gathered data
-	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
+	if(
+		(typeof(ipv4) === 'undefined') ||
+		(ipv4 === null) ||
+		(ipv4 === '') ||
+		(ipv4.length <= 0) ||
+		(ipv4.length > 16)
+		
+	){callback(null, false);}
 	else{
 		
 		// explode gathered ipv4 address
 		ipv4 = ipv4.split('.');
 		
 		/* ipv4 class match */
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 0) && (parseInt(ipv4[0].trim()) <= 127)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'A'});} // class A ipv4
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 127) && (parseInt(ipv4[0].trim()) <= 191)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'B'});} // class B ipv4
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 191) && (parseInt(ipv4[0].trim()) <=  223)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'C'});} // class C ipv4
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 223) && (parseInt(ipv4[0].trim()) <= 239)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'D'});} // class D ipv4
-		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 239) && (parseInt(ipv4[0].trim()) <= 247)){ipv4 = null; callback(null, {IPv4: ipv4, Class: 'E'});} // class E ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 0) && (parseInt(ipv4[0].trim()) <= 127)){callback(null, {IPv4: ipv4, Class: 'A'}); return;} // class A ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 127) && (parseInt(ipv4[0].trim()) <= 191)){callback(null, {IPv4: ipv4, Class: 'B'}); return;} // class B ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 191) && (parseInt(ipv4[0].trim()) <=  223)){callback(null, {IPv4: ipv4, Class: 'C'}); return;} // class C ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 223) && (parseInt(ipv4[0].trim()) <= 239)){callback(null, {IPv4: ipv4, Class: 'D'}); return;} // class D ipv4
+		if((ipv4 !== null) && (parseInt(ipv4[0].trim()) > 239) && (parseInt(ipv4[0].trim()) <= 247)){callback(null, {IPv4: ipv4, Class: 'E'}); return;} // class E ipv4
 		if(ipv4 !== null){callback(null, false);} // fail safe bail out
 	}
 };
+
+
+
 
 
 
@@ -217,37 +240,42 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
 	else{
 		
+		// requiring external libs
+		var async = require('async'),
+			dns = require('dns');
+		
 		// declaring required holders and references!
-		var dns = require('dns');
 		var buffer = {ip: ipv4}, ip = ipv4.split(".");
-	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + this.cymruOrigin;      
-	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + this.cymruPeers;
-	    var provider = buffer['asn'] + this.cymruASN;
-	    
+	    var origin = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + '.origin.asn.cymru.com';
+	    var peers = ip[3] + '.' + ip[2] + '.' + ip[1] + '.' + ip[0] + '.peer.asn.cymru.com';
+	    var provider = buffer['asn'] + '.asn.cymru.com';
 	    
 	    
 	    /*
 	     * ASYNC WATERFALL SEQUENCE
 	     * Sweeping Ipv4 data, step by step...
 	     */
-	    this.async.waterfall([
+	    async.waterfall([
   
   
-         /*
-          * Gather main data
+         /*	=============================
+          * 	Gather main network data
+          * =============================
           */
+          
 	        function(callback){
 	            
 	            // gather ip data...
 	            dns.resolveTxt(origin, function(err, dnsresult){
 	                
+	                // fail safe bail out
 	                if(err){return false;}
 	       
 	                // sweeping dns result
 	                dnsresult.forEach(function(dnsres){
 	                    
 	                    // split & gather data
-	                    var data = dnsres.split('|');
+	                    var data = dnsres[0].split('|');
 	                    buffer['cidr'] = data[1].trim();
 	                    buffer['asn'] = data[0].trim();
 	                    buffer['country'] = data[2].trim();
@@ -259,9 +287,14 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        },
 	        
 	        
-	        /*
-	         * Gather asn peers
-	         */
+	        
+	        
+         /*	==========================
+          * 	Gather asn peers
+          * ==========================
+          */
+          
+	        
 	        function(asn, callback){
 	        
 	            // gather asn peers data
@@ -272,7 +305,7 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                dnsresult.forEach(function(dnsres){
 	                    
 	                    // extracting data from dns result
-	                    var data = dnsres.split('|');
+	                    var data = dnsres[0].split('|');
 	                    data = data[0].split(' ');
 	                    data.pop();
 	                    buffer['asnpeers'] = data;
@@ -287,20 +320,23 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	        
 	        
 	        
-	        /*
-	         * gather provider data
-	         */
+         /*	==========================
+          * 	Gather provider data
+          * ==========================
+          */
+          
+	        
 	        function(asn, callback){
 	            
 	            // gather asn / provider details
-	            dns.resolveTxt('AS'+ asn + cymru.cymruASN, function(err, dnsresult){
+	            dns.resolveTxt('AS'+ asn + '.asn.cymru.com', function(err, dnsresult){
 	                if(err){return;}
 	                
 	                // sweeping result
 	                dnsresult.forEach(function(dnsres){
 	                    
 	                    // extracting data from dns result
-	                    var data = dnsres.split('|');
+	                    var data = dnsres[0].split('|');
 	                    buffer['provider'] = data[4].trim();
 	                    buffer['tstamp'] = new Date();
 	                    
@@ -327,14 +363,6 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 
 
 
-
-
-
-
-
-
-
-
 /* 
  * Get IPv4 DNS related data
  * -----------------------------------------------------
@@ -356,7 +384,10 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 	else{
 		
 		// declaring data holder and links to upper scope stuff
-		var dnsdata = {}, dcnt = 0, async = this.async, dns = require('dns');;
+		var dnsdata = {}, 
+			dcnt = 0, 
+			async = require('async'), 
+			dns = require('dns');;
 		
 		// reverse DNS querying about desired ipv4
 		dns.reverse(ipv4, function(error, dnsrev){
@@ -402,11 +433,6 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 
 
 
-
-
-
-
-
 /*
  * IPv4 To Integer
  * ---------------------------------------------
@@ -425,7 +451,14 @@ IPv4Tools.prototype.getDnsData = function(ipv4, callback){
 IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
 	
 	// validating gathered data
-	if((typeof(ipv4) === 'undefined') || (ipv4 === null) || (ipv4 === '') || (ipv4.length <= 0) || (ipv4.length > 16)){callback(null, false);}
+	if(
+		(typeof(ipv4) === 'undefined') ||
+		(ipv4 === null) ||
+		(ipv4 === '') ||
+		(ipv4.length <= 0) ||
+		(ipv4.length > 16)
+		
+	){callback(null, false);}
 	else{
 
 		// spliting gathered ipv4
@@ -456,7 +489,14 @@ IPv4Tools.prototype.ipv4ToInteger = function(ipv4, callback){
 IPv4Tools.prototype.integerToIPv4 = function(number, callback){
 	
 	// validating gathered data (min & max ipv4 integer representations)
-	if((typeof(number) === 'undefined') || (number === null) || (number === '') || (number <= 0) || (number > 4294967295)){callback(null, false);}
+	if(
+		(typeof(number) === 'undefined') ||
+		(number === null) ||
+		(number === '') ||
+		(number <= 0) ||
+		(number > 4294967295)
+		
+	){callback(null, false);}
 	else{
 		
 		// reconstructing IPv4 from integer
