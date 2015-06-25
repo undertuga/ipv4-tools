@@ -1,5 +1,7 @@
 #ipv4-tools
 
+[![Join the chat at https://gitter.im/undertuga/ipv4-tools](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/undertuga/ipv4-tools?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ####IPv4 utility toolkit, developed for use on Node.JS / IO.JS network related projects. 
 ####(NPM package)
 ***
