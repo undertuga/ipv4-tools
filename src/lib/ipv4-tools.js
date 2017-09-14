@@ -278,10 +278,11 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                    buffer['asn'] = data[0].trim();
 	                    buffer['country'] = data[2].trim();
 
-	                    // return asn to next step
-	                    callback(null, buffer['asn']);
-						return;
-	                });
+					});
+					
+					// return asn to next step
+					callback(null, buffer['asn']);
+					return;
 	            });
 	        },
 
@@ -309,10 +310,11 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                    data.pop();
 	                    buffer['asnpeers'] = data;
 
-	                    // return asn to next step
-	                    callback(null, asn);
-						return;
-	                });
+					});
+					
+					// return asn to next step
+					callback(null, asn);
+					return;
 	            });
 	        },
 
@@ -340,10 +342,11 @@ IPv4Tools.prototype.getNetworkData = function(ipv4, callback){
 	                    buffer['provider'] = data[4].trim();
 	                    buffer['tstamp'] = new Date();
 
-	                    // return async ops state
-	                    callback(null, true);
-						return;
-	                });
+					});
+					
+					// return async ops state
+					callback(null, true);
+					return;
 	            });
 	        }
 
